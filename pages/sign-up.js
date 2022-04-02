@@ -1,141 +1,262 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
-import {
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  Paper,
-  Stack,
-  Typography,
-  OutlinedInput,
-} from '@mui/material'
 import Head from 'next/head'
 import Link from 'next/link'
+import {
+  Button,
+  Container,
+  Grid,
+  InputAdornment,
+  OutlinedInput,
+  Stack,
+  Toolbar,
+  Typography,
+  useTheme,
+} from '@mui/material'
+import { Box } from '@mui/system'
 import EmailIcon from '@mui/icons-material/Email'
 import LockIcon from '@mui/icons-material/Lock'
 import PersonIcon from '@mui/icons-material/Person'
+import { auth, db } from '../Firebase/firebase'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { doc, setDoc, getDoc } from 'firebase/firestore'
+import SnackBar from '../components/SnackBar'
 
 const SignUp = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [displayName, setDisplayName] = useState('')
+  const [userName, setUserName] = useState('')
+  const [message, setMessage] = useState('')
+  const [variant, setVariant] = useState('success')
+  const [snackOpen, setSnackOpen] = useState(false)
 
   const router = useRouter()
+  const theme = useTheme()
+
+  const snackClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+
+    setSnackOpen(false)
+  }
+
+  const isValidEmail = (enteredEmail) => {
+    const emailRegex =
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+    return emailRegex.test(enteredEmail)
+  }
+
+  const signUp = () => {
+    if (email.length !== 0 && password.length !== 0) {
+      if (userName.length < 4) {
+        setMessage('User Name length should be atleast 4')
+        setVariant('error')
+        setSnackOpen(true)
+        return
+      }
+
+      if (isValidEmail(email)) {
+        if (password.length >= 6) {
+          createUserWithEmailAndPassword(auth, email, password)
+            .then(async (userCredential) => {
+              const user = userCredential.user
+
+              const docRef = doc(db, 'users', user.uid)
+              await setDoc(docRef, {
+                displayName: displayName,
+                userName: userName,
+                email: email,
+                uid: user.uid,
+              })
+                .then(async () => {
+                  const docSnap = await getDoc(docRef)
+                  if (docSnap.exists()) {
+                    sessionStorage.setItem(
+                      'userData',
+                      JSON.stringify(docSnap.data())
+                    )
+                    router.replace('/home')
+                  } else {
+                    setMessage(error.message)
+                    setVariant('error')
+                    setSnackOpen(true)
+                  }
+                })
+                .catch((error) => {
+                  setMessage(error.message)
+                  setVariant('error')
+                  setSnackOpen(true)
+                })
+            })
+            .catch((error) => {
+              setMessage(`${error.code.split('/')[1]} ${error.message}`)
+              setVariant('error')
+              setSnackOpen(true)
+              // ..
+            })
+        } else {
+          setMessage('Password length should be atleast 6 characters')
+          setVariant('error')
+          setSnackOpen(true)
+        }
+      } else {
+        setMessage('Invalid Email')
+        setVariant('error')
+        setSnackOpen(true)
+      }
+    } else {
+      setMessage('All fields are required')
+      setVariant('error')
+      setSnackOpen(true)
+    }
+  }
 
   return (
-    <Box
-      sx={{
-        height: '100vh',
-        width: '100vw',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
+    <Box sx={{ height: '100vh' }}>
       <Head>
         <title>Felix / Sign Up</title>
         <meta name='description' content='Felix Social Media app Sign Up' />
         <link rel='icon' href='/logo.png' />
       </Head>
 
-      <Paper
-        sx={{ width: '60%', height: '70%', boxShadow: 8, borderRadius: 5 }}
-      >
-        <Stack direction='row' sx={{ width: '100%', height: '100%' }}>
-          <Box
+      <Container sx={{ height: '100%' }}>
+        <Toolbar sx={{ height: '10%' }}>
+          <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
+            Felix App
+          </Typography>
+        </Toolbar>
+
+        <Grid
+          container
+          sx={{
+            height: '90%',
+          }}
+        >
+          <Grid
+            item
+            xs={12}
+            sm={12}
+            lg={6}
             sx={{
-              width: '50%',
-              backgroundColor: '#007bff',
-              borderRadius: 5,
-              display: 'flex',
-              justifyContent: 'center',
-              backgroundImage: 'linear-gradient(-90deg, lightskyBlue, #007bff)',
-            }}
-          >
-            <Image src='/vercel.svg' height={300} width={300} />
-          </Box>
-          <Box
-            sx={{
-              width: '50%',
-              height: '100%',
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'center',
-              px: 10,
+              [theme.breakpoints.up('sm')]: {
+                justifyContent: 'center',
+              },
+              [theme.breakpoints.down('sm')]: {
+                mt: 5,
+              },
             }}
           >
-            <Typography
-              component='h3'
-              variant='h4'
-              fontWeight='600'
-              sx={{ mb: 5 }}
-              color='#007bff'
-            >
-              Sign Up
-            </Typography>
+            <Box>
+              <p
+                style={{
+                  textTransform: 'uppercase',
+                  color: 'rgba(255, 255, 255, 0.4)',
+                }}
+              >
+                Start for Free
+              </p>
+              <Typography
+                variant='h3'
+                component='h1'
+                sx={{
+                  [theme.breakpoints.down('sm')]: {
+                    fontSize: 34,
+                  },
+                  my: 1,
+                }}
+              >
+                Create new account
+              </Typography>
+              <p style={{ color: 'rgba(255, 255, 255, 0.4)' }}>
+                Already A Member? <Link href='/sign-in'>Sign In</Link>
+              </p>
+            </Box>
+            <Box sx={{ mt: 5 }}>
+              <Grid container direction='row' columnSpacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <OutlinedInput
+                    margin='dense'
+                    fullWidth
+                    placeholder='Display Name'
+                    sx={{ color: '#fff', my: 1 }}
+                    startAdornment={
+                      <InputAdornment position='start'>
+                        <PersonIcon color='primary' />
+                      </InputAdornment>
+                    }
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <OutlinedInput
+                    fullWidth
+                    margin='dense'
+                    placeholder='User Name'
+                    sx={{ color: '#fff', my: 1 }}
+                    startAdornment={
+                      <InputAdornment position='start'>
+                        <PersonIcon color='primary' />
+                      </InputAdornment>
+                    }
+                    type='username'
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)}
+                  />
+                </Grid>
+              </Grid>
 
-            <FormControl sx={{ py: 1.5 }}>
-              <FormLabel sx={{ fontWeight: '500' }}>Display Name</FormLabel>
               <OutlinedInput
-                fullWidth={true}
-                type='username'
-                value={displayName}
-                startAdornment={<PersonIcon sx={{ mr: 2, color: 'gray' }} />}
-                onChange={(e) => setDisplayName(e.target.value)}
-              />
-            </FormControl>
-
-            <FormControl sx={{ py: 1.5 }}>
-              <FormLabel sx={{ fontWeight: '500' }}>Email Address</FormLabel>
-              <OutlinedInput
-                fullWidth={true}
+                fullWidth
+                margin='dense'
+                placeholder='Email Address'
+                sx={{ color: '#fff', my: 1 }}
+                startAdornment={
+                  <InputAdornment position='start'>
+                    <EmailIcon color='primary' />
+                  </InputAdornment>
+                }
                 type='emailaddress'
                 value={email}
-                startAdornment={<EmailIcon sx={{ mr: 2, color: 'gray' }} />}
                 onChange={(e) => setEmail(e.target.value)}
               />
-            </FormControl>
-
-            <FormControl sx={{ py: 1.5 }}>
-              <FormLabel sx={{ fontWeight: '500' }}>Password</FormLabel>
               <OutlinedInput
-                fullWidth={true}
+                fullWidth
+                margin='dense'
+                placeholder='Password'
+                sx={{ color: '#fff', my: 1 }}
+                startAdornment={
+                  <InputAdornment position='start'>
+                    <LockIcon color='primary' />
+                  </InputAdornment>
+                }
                 type='password'
-                startAdornment={<LockIcon sx={{ mr: 2, color: 'gray' }} />}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-            </FormControl>
-
-            <Button
-              variant='contained'
-              sx={{
-                py: 1.3,
-                textTransform: 'capitalize',
-                backgroundImage:
-                  'linear-gradient(-90deg, lightskyBlue, #007bff)',
-                fontSize: 22,
-                letterSpacing: 1.4,
-                my: 4,
-              }}
-              onClick={() => router.push('/home')}
-            >
-              Sign Up
-            </Button>
-
-            <Link href='/sign-in'>
-              <Typography textAlign='center' sx={{ cursor: 'pointer' }}>
-                Already have an account?{' '}
-                <span style={{ color: '#007bff', fontWeight: '600' }}>
-                  Sign In
-                </span>
-              </Typography>
-            </Link>
-          </Box>
-        </Stack>
-      </Paper>
+              <Button
+                variant='contained'
+                sx={{ py: 1.2, my: 2 }}
+                onClick={() => signUp()}
+              >
+                Create Account
+              </Button>
+            </Box>
+          </Grid>
+        </Grid>
+      </Container>
+      <SnackBar
+        message={message}
+        variant={variant}
+        snackOpen={snackOpen}
+        snackClose={snackClose}
+      />
     </Box>
   )
 }

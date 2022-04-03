@@ -75,3 +75,18 @@ a:hover {
 .profileImage {
   border-radius: 50%;
 }
+
+.main-grid-item {
+  justify-content: center;
+  position: relative;
+  /* border: 1px solid blacK; */
+}
+
+.carousel-btn:hover {
+  background: #eaedf1;
+}
+
+.rounded {
+  border-radius: '10px' !important;
+  overflow: hidden;
+}

@@ -1,40 +1,27 @@
 import React, { useEffect, useState } from 'react'
+import { useRouter, userouter } from 'next/router'
 import {
   Box,
-  CssBaseline,
   AppBar,
-  Divider,
-  Drawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   Toolbar,
   Typography,
   IconButton,
-  Icon,
   Container,
   Avatar,
-  Stack,
-  Paper,
   Grid,
-  ListItemAvatar,
   InputBase,
   Badge,
 } from '@mui/material'
-import { styled, alpha } from '@mui/material/styles'
-import InboxIcon from '@mui/icons-material/MoveToInbox'
-import MailIcon from '@mui/icons-material/Mail'
-import ImageIcon from '@mui/icons-material/Image'
-import WorkIcon from '@mui/icons-material/Work'
+import { styled } from '@mui/material/styles'
 import MenuIcon from '@mui/icons-material/Menu'
 import SearchIcon from '@mui/icons-material/Search'
 import NotificationsIcon from '@mui/icons-material/Notifications'
-import MoreIcon from '@mui/icons-material/More'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
 import ChatIcon from '@mui/icons-material/Chat'
+import LeftSidebar from './LeftSidebar'
+import RightSidebar from './RightSidebar'
 
 const mobileMenuId = 'primary-search-account-menu-mobile'
-const menuId = 'primary-search-account-menu'
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -74,11 +61,16 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     [theme.breakpoints.up('md')]: {
       width: '50ch',
     },
+    [theme.breakpoints.up('sm')]: {
+      width: '40ch',
+    },
   },
 }))
 
 const NavbarLayout = ({ children }) => {
   const [userData, setUserData] = useState(null)
+
+  const router = useRouter()
 
   useEffect(() => {
     const data = window.sessionStorage.getItem('userData')
@@ -89,7 +81,14 @@ const NavbarLayout = ({ children }) => {
   }, [])
 
   return (
-    <Box sx={{ width: '100vw', height: '100vh' }}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
+    >
       <AppBar
         position="static"
         sx={{ backgroundColor: 'white', color: 'black' }}
@@ -102,20 +101,20 @@ const NavbarLayout = ({ children }) => {
                 edge="start"
                 color="inherit"
                 aria-label="open drawer"
-                sx={{ mr: 2, display: { md: 'none' } }}
+                sx={{ mr: 2, display: { sm: 'none' } }}
               >
                 <MenuIcon />
               </IconButton>
               <Typography
+                onClick={() => router.push('/home')}
                 variant="h6"
                 noWrap
                 component="div"
-                sx={{ display: { xs: 'none', sm: 'block' } }}
+                sx={{ display: { xs: 'none', sm: 'block' }, cursor: 'pointer' }}
               >
-                Felix Social
+                InDaMoment
               </Typography>
             </Box>
-
             <Search>
               <SearchIconWrapper>
                 <SearchIcon />
@@ -125,9 +124,12 @@ const NavbarLayout = ({ children }) => {
                 inputProps={{ 'aria-label': 'search' }}
               />
             </Search>
-
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <IconButton size="large" color="inherit">
+              <IconButton
+                size="large"
+                color="inherit"
+                onClick={() => router.push('/messages')}
+              >
                 <Badge badgeContent={4} color="error">
                   <ChatIcon />
                 </Badge>
@@ -138,9 +140,10 @@ const NavbarLayout = ({ children }) => {
                 </Badge>
               </IconButton>
               <Avatar
-                sx={{ ml: 2 }}
+                sx={{ ml: 2, cursor: 'pointer' }}
                 alt="Remy Sharp"
                 src={userData ? userData.profilePhotoUrl : ''}
+                onClick={() => router.push(`/profile/${userData.userName}`)}
               />
             </Box>
             <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
@@ -151,12 +154,44 @@ const NavbarLayout = ({ children }) => {
                 aria-haspopup="true"
                 color="inherit"
               >
-                <MoreIcon />
+                <MoreVertIcon />
               </IconButton>
             </Box>
           </Toolbar>
         </Container>
       </AppBar>
+
+      <Box
+        sx={{
+          width: { xl: '80%', xs: '100%' },
+          height: '100%',
+        }}
+      >
+        <Grid container sx={{ height: '100%' }}>
+          <Grid
+            item
+            className="main-grid-item"
+            lg={3}
+            sx={{ display: { xs: 'none', lg: 'flex' } }}
+          >
+            <LeftSidebar />
+          </Grid>
+
+          <Grid item className="main-grid-item" lg={6} md={8} xs={12}>
+            {children}
+          </Grid>
+
+          <Grid
+            item
+            className="main-grid-item"
+            md={4}
+            lg={3}
+            sx={{ display: { xs: 'none', md: 'flex' } }}
+          >
+            <RightSidebar />
+          </Grid>
+        </Grid>
+      </Box>
     </Box>
   )
 }

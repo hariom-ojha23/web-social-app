@@ -32,8 +32,6 @@ html {
 
 body {
   font-family: 'Poppins', sans-serif;
-  /* background-color: var(--color-bg); 
-  color: var(--color-white);*/
   background-color: #eaedf1;
   line-height: 1.7;
   min-height: 100vh;
@@ -78,15 +76,42 @@ a:hover {
 
 .main-grid-item {
   justify-content: center;
-  position: relative;
-  /* border: 1px solid blacK; */
 }
 
 .carousel-btn:hover {
   background: #eaedf1;
 }
 
-.rounded {
-  border-radius: '10px' !important;
+/* Image Carousel */
+
+.carousel {
   overflow: hidden;
+}
+
+.inner {
+  white-space: nowrap;
+  transition: transform 0.3s;
+}
+
+.carousel-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.indicators {
+  display: flex;
+  justify-content: center;
+}
+
+.indicators > button {
+  margin: 5px;
+}
+
+.indicators > button.active {
+  background-color: green;
+  color: #fff;
 }

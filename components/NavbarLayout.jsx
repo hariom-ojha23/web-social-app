@@ -90,7 +90,7 @@ const NavbarLayout = ({ children }) => {
       }}
     >
       <AppBar
-        position="static"
+        position="fixed"
         sx={{ backgroundColor: 'white', color: 'black' }}
       >
         <Container>
@@ -161,6 +161,7 @@ const NavbarLayout = ({ children }) => {
         </Container>
       </AppBar>
 
+      <Toolbar />
       <Box
         sx={{
           width: { xl: '80%', xs: '100%' },

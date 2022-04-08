@@ -32,9 +32,8 @@ const Home = () => {
     color: 'inherit',
     '& .MuiInputBase-input': {
       padding: theme.spacing(1.5, 2, 1.5, 2),
-      // vertical padding + font size from searchIcon
       transition: theme.transitions.create('width'),
-      width: '100%',
+      width: '100% !important',
     },
   }))
 

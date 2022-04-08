@@ -12,13 +12,13 @@ import {
   Stack,
 } from '@mui/material'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble'
 import SendRoundedIcon from '@mui/icons-material/SendRounded'
 
 import Lottie from 'lottie-react'
 import LikeAnimation from '../assets/like.json'
+
+import Carousel, { CarouselItem } from './Carousel'
 
 import { db } from '../Firebase/firebase'
 import { doc, updateDoc, arrayRemove, arrayUnion } from 'firebase/firestore'
@@ -81,7 +81,7 @@ const PostComponent = (props) => {
   }
 
   return (
-    <Paper key={post.id} sx={{ p: 2, px: 4, borderRadius: 4, my: 2 }}>
+    <Paper key={post.id} sx={{ px: 4, borderRadius: 4, my: 2 }}>
       <ListItem
         sx={{ mb: 2, px: 0 }}
         secondaryAction={
@@ -109,8 +109,8 @@ const PostComponent = (props) => {
         >
           <div
             style={{
-              height: 600,
-              width: 650,
+              height: 650,
+              width: 670,
               borderRadius: '10px',
               overflow: 'hidden',
             }}
@@ -119,48 +119,19 @@ const PostComponent = (props) => {
           </div>
         </Box>
       ) : (
-        <Box
-          sx={{
-            position: 'relative',
-            display: 'flex',
-            justifyContent: 'center',
-          }}
-        >
-          <div
-            style={{
-              height: 600,
-              width: 650,
-              borderRadius: '10px',
-              overflow: 'hidden',
-            }}
-          >
-            <Image className="rounded" src={post.images[0].url} layout="fill" />
-          </div>
-
-          <IconButton
-            className="carousel-btn"
-            sx={{
-              position: 'absolute',
-              left: -20,
-              top: '50%',
-              background: '#f1f4f7',
-              boxShadow: 3,
-            }}
-          >
-            <ChevronLeftIcon />
-          </IconButton>
-          <IconButton
-            className="carousel-btn"
-            sx={{
-              position: 'absolute',
-              right: -20,
-              top: '50%',
-              background: '#f1f4f7',
-              boxShadow: 3,
-            }}
-          >
-            <ChevronRightIcon />
-          </IconButton>
+        <Box>
+          <Carousel>
+            {post.images.map((image, index) => (
+              <CarouselItem>
+                <Image
+                  className="rounded"
+                  src={post.images[index].url}
+                  width={670}
+                  height={650}
+                />
+              </CarouselItem>
+            ))}
+          </Carousel>
         </Box>
       )}
 
@@ -172,7 +143,12 @@ const PostComponent = (props) => {
             autoPlay={false}
             loop={false}
             initialSegment={segment}
-            style={{ width: 70, height: 70, marginRight: -10 }}
+            style={{
+              width: 70,
+              height: 70,
+              marginRight: -10,
+              cursor: 'pointer',
+            }}
             onClick={() => likeOrUnlike()}
           />
 

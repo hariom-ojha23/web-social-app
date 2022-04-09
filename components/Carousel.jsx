@@ -18,9 +18,9 @@ const Carousel = ({ children }) => {
 
   const updateIndex = (newIndex) => {
     if (newIndex < 0) {
-      newIndex = React.Children.count(children) - 1
-    } else if (newIndex >= React.Children.count(children)) {
       newIndex = 0
+    } else if (newIndex >= React.Children.count(children)) {
+      newIndex = React.Children.count(children) - 1
     }
 
     setActiveIndex(newIndex)
@@ -38,7 +38,7 @@ const Carousel = ({ children }) => {
           className="inner"
           style={{ transform: `translateX(-${activeIndex * 100}%)` }}
         >
-          {React.Children.map(children, (child, index) => {
+          {React.Children.map(children, (child, _) => {
             return React.cloneElement(child, { width: '100%' })
           })}
         </Box>
@@ -67,6 +67,9 @@ const Carousel = ({ children }) => {
           boxShadow: 3,
           zIndex: 5,
         }}
+        // disabled={
+        //   activeIndex === React.Children.count(children) - 1 ? true : false
+        // }
         onClick={() => updateIndex(activeIndex + 1)}
       >
         <ChevronRightIcon />

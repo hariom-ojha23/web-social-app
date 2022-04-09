@@ -75,17 +75,28 @@ a:hover {
 }
 
 .main-grid-item {
-  justify-content: center;
+  align-items: center;
+  position: relative;
 }
 
-.carousel-btn:hover {
-  background: #eaedf1;
+.content-grid {
+  overflow-y: sroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.content-grid::-webkit-scrollbar {
+  display: none;
 }
 
 /* Image Carousel */
 
 .carousel {
   overflow: hidden;
+}
+
+.carousel-btn:hover {
+  background: #eaedf1;
 }
 
 .inner {

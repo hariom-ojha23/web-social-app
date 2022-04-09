@@ -33,7 +33,13 @@ const Home = () => {
     '& .MuiInputBase-input': {
       padding: theme.spacing(1.5, 2, 1.5, 2),
       transition: theme.transitions.create('width'),
-      width: '100% !important',
+      width: '100%',
+      [theme.breakpoints.up('md')]: {
+        width: '80ch',
+      },
+      [theme.breakpoints.up('sm')]: {
+        width: '40ch',
+      },
     },
   }))
 
@@ -63,7 +69,6 @@ const Home = () => {
     <Box
       sx={{
         p: 2,
-        minHeight: '92vh',
       }}
     >
       <Head>
@@ -89,8 +94,8 @@ const Home = () => {
       </Paper>
 
       <Box sx={{ my: 3 }}>
-        {postList.map((post) => (
-          <PostComponent post={post} userId={userData.uid} />
+        {postList.map((post, index) => (
+          <PostComponent key={index} post={post} userId={userData.uid} />
         ))}
       </Box>
     </Box>

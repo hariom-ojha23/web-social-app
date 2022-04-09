@@ -109,23 +109,26 @@ const PostComponent = (props) => {
         >
           <div
             style={{
-              height: 650,
-              width: 670,
               borderRadius: '10px',
               overflow: 'hidden',
             }}
           >
-            <Image className="rounded" src={post.images[0].url} layout="fill" />
+            <Image
+              className="rounded"
+              src={post.images[0].url}
+              width={670}
+              height={650}
+            />
           </div>
         </Box>
       ) : (
         <Box>
           <Carousel>
             {post.images.map((image, index) => (
-              <CarouselItem>
+              <CarouselItem key={index}>
                 <Image
                   className="rounded"
-                  src={post.images[index].url}
+                  src={image.url}
                   width={670}
                   height={650}
                 />

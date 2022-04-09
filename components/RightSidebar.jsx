@@ -67,7 +67,7 @@ const RightSidebar = () => {
 
   return (
     <Box sx={{ p: 2, width: '100%' }}>
-      <Paper sx={{ borderRadius: 4, p: 2 }}>
+      <Paper sx={{ borderRadius: 4, p: 2, px: 1.5 }}>
         <h3 style={{ marginLeft: 3, marginTop: 5, marginBottom: 5 }}>
           Followers
         </h3>
@@ -95,7 +95,7 @@ const RightSidebar = () => {
         )}
       </Paper>
 
-      <Paper sx={{ borderRadius: 4, p: 2, mt: 2 }}>
+      <Paper sx={{ borderRadius: 4, p: 2, px: 1.5, mt: 2 }}>
         <h3 style={{ marginLeft: 3, marginTop: 5, marginBottom: 5 }}>
           Suggestions
         </h3>
